@@ -1,0 +1,52 @@
+/gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary
+
+# ───────────────
+# OS별 줄바꿈 통일
+# ───────────────
+* text=auto
+
+# Shell scripts는 무조건 LF 강제
+*.sh text eol=lf
+
+# ───────────────
+# 바이너리 파일 (diff 불가)
+# ───────────────
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.pdf binary
+*.zip binary
+*.jar binary
+*.exe binary
+*.mp4 binary
+*.mov binary
+
+# ───────────────
+# markdown과 문서 텍스트 파일은 텍스트로 처리
+# ───────────────
+*.md text
+*.txt text
+*.yml text
+*.yaml text
+*.json text
+
+# ───────────────
+# 배포 환경용 .env 파일은 텍스트 처리
+# (충돌을 피하기 위해 merge도 text)
+# ───────────────
+*.env text
+
+# ───────────────
+# Node / Java 락파일은 diff 가능하지만
+# merge 전략 조심해야 하므로 text 처리
+# ───────────────
+package-lock.json text
+yarn.lock text
+build.gradle text
+settings.gradle text
+pom.xml text
