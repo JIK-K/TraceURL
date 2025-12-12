@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: traceurl
+
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        default_schema: traceurl
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/traceurl
+    username: traceurl
+    password: tra1205a
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 4
