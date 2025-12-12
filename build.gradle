@@ -43,6 +43,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation "io.github.cdimascio:dotenv-java:2.3.2"
 
     implementation 'io.netty:netty-all:4.1.97.Final'  // 최신 안정화 버전
 
