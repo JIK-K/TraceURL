@@ -1,10 +1,9 @@
-package com.traceurl.traceurl.domain.user;
+package com.traceurl.traceurl.domain.user.entity;
 
 import com.traceurl.traceurl.common.base.BaseEntity;
 import com.traceurl.traceurl.common.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
