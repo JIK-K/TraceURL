@@ -1,8 +1,8 @@
-package com.traceurl.traceurl.domain.user.controller;
+package com.traceurl.traceurl.core.user.controller;
 
 import com.traceurl.traceurl.common.dto.ResponseDto;
-import com.traceurl.traceurl.domain.user.service.UserService;
-import com.traceurl.traceurl.domain.user.dto.response.UserResponseDto;
+import com.traceurl.traceurl.core.user.service.UserService;
+import com.traceurl.traceurl.core.user.dto.response.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;

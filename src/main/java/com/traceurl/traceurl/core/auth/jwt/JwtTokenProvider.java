@@ -1,4 +1,4 @@
-package com.traceurl.traceurl.domain.auth.jwt;
+package com.traceurl.traceurl.core.auth.jwt;
 
 import com.traceurl.traceurl.common.dto.TokenDto;
 import io.jsonwebtoken.Claims;

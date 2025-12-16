@@ -1,6 +1,6 @@
-package com.traceurl.traceurl.domain.user.repository;
+package com.traceurl.traceurl.core.user.repository;
 
-import com.traceurl.traceurl.domain.user.entity.User;
+import com.traceurl.traceurl.core.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

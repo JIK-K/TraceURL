@@ -1,7 +1,7 @@
-package com.traceurl.traceurl.domain.user.entity;
+package com.traceurl.traceurl.core.user.entity;
 
 import com.traceurl.traceurl.common.base.BaseEntity;
-import com.traceurl.traceurl.common.enums.UserStatus;
+import com.traceurl.traceurl.common.enums.BaseStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,10 +29,13 @@ public class User extends BaseEntity{
     @Column(nullable = false, name = "display_name")
     private String displayName;
 
+    @Column(nullable = true, name = "type")
+    private String type;
+
     @Builder.Default
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private UserStatus status = UserStatus.ACTIVE;
+    private BaseStatus status = BaseStatus.ACTIVE;
 
     @Column(name = "last_login_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime lastLoginAt;
@@ -43,7 +46,7 @@ public class User extends BaseEntity{
             this.lastLoginAt = OffsetDateTime.now();
         }
         if (this.status == null){
-            this.status = UserStatus.ACTIVE;
+            this.status = BaseStatus.ACTIVE;
         }
     }
 }

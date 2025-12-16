@@ -1,8 +1,8 @@
-package com.traceurl.traceurl.domain.auth.handler;
+package com.traceurl.traceurl.core.auth.handler;
 
 import com.traceurl.traceurl.common.dto.TokenDto;
-import com.traceurl.traceurl.domain.auth.jwt.JwtTokenProvider;
-import com.traceurl.traceurl.domain.auth.oauth.CustomOAuthUser;
+import com.traceurl.traceurl.core.auth.jwt.JwtTokenProvider;
+import com.traceurl.traceurl.core.auth.oauth.CustomOAuthUser;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

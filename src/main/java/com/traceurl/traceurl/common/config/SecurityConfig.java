@@ -1,8 +1,8 @@
 package com.traceurl.traceurl.common.config;
 
-import com.traceurl.traceurl.domain.auth.handler.OAuthSuccessHandler;
-import com.traceurl.traceurl.domain.auth.jwt.JwtAuthenticationFilter;
-import com.traceurl.traceurl.domain.auth.service.CustomOAuthUserService;
+import com.traceurl.traceurl.core.auth.handler.OAuthSuccessHandler;
+import com.traceurl.traceurl.core.auth.jwt.JwtAuthenticationFilter;
+import com.traceurl.traceurl.core.auth.service.CustomOAuthUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.traceurl.traceurl.domain.auth.jwt.JwtTokenProvider;
+import com.traceurl.traceurl.core.auth.jwt.JwtTokenProvider;
 
 import java.util.List;
 

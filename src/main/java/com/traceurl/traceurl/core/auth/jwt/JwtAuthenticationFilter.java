@@ -1,4 +1,4 @@
-package com.traceurl.traceurl.domain.auth.jwt;
+package com.traceurl.traceurl.core.auth.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

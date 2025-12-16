@@ -1,6 +1,6 @@
 package com.traceurl.traceurl.common.enums;
 
-public enum UserStatus {
+public enum BaseStatus {
     ACTIVE,
     INACTIVE,
 }

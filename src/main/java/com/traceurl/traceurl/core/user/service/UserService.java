@@ -1,11 +1,10 @@
-package com.traceurl.traceurl.domain.user.service;
+package com.traceurl.traceurl.core.user.service;
 
-import com.traceurl.traceurl.common.constant.JwtError;
 import com.traceurl.traceurl.common.constant.UserError;
 import com.traceurl.traceurl.common.exception.BusinessException;
-import com.traceurl.traceurl.domain.user.entity.User;
-import com.traceurl.traceurl.domain.user.repository.UserRepository;
-import com.traceurl.traceurl.domain.user.dto.response.UserResponseDto;
+import com.traceurl.traceurl.core.user.entity.User;
+import com.traceurl.traceurl.core.user.repository.UserRepository;
+import com.traceurl.traceurl.core.user.dto.response.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,10 @@
-package com.traceurl.traceurl.domain.auth.controller;
+package com.traceurl.traceurl.core.auth.controller;
 
 import com.traceurl.traceurl.common.constant.JwtError;
 import com.traceurl.traceurl.common.dto.ResponseDto;
 import com.traceurl.traceurl.common.dto.TokenDto;
-import com.traceurl.traceurl.common.error.ErrorType;
 import com.traceurl.traceurl.common.exception.BusinessException;
-import com.traceurl.traceurl.domain.auth.jwt.JwtTokenProvider;
+import com.traceurl.traceurl.core.auth.jwt.JwtTokenProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

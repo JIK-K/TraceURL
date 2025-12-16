@@ -1,4 +1,4 @@
-package com.traceurl.traceurl.domain.auth.oauth;
+package com.traceurl.traceurl.core.auth.oauth;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

@@ -30,7 +30,17 @@ spring:
             scope:
               - email
               - profile
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            redirect-uri: ${GITHUB_CALLBACK_URL}
+            scope:
+              - user:email
 
 jwt:
   access-secret: ${ACCESS_TOKEN_SECRET_KEY}
   refresh-secret: ${REFRESH_TOKEN_SECRET_KEY}
+
+logging:
+  level:
+    com.traceurl.traceurl.domain.auth.service.CustomOAuthUserService: debug
