@@ -42,5 +42,9 @@ jwt:
   refresh-secret: ${REFRESH_TOKEN_SECRET_KEY}
 
 logging:
+  file:
+    encoding: UTF-8
+  console:
+    encoding: UTF-8
   level:
-    com.traceurl.traceurl.domain.auth.service.CustomOAuthUserService: debug
+    root: info

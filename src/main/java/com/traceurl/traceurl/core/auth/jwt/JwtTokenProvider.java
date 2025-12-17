@@ -2,15 +2,17 @@ package com.traceurl.traceurl.core.auth.jwt;
 
 import com.traceurl.traceurl.common.dto.TokenDto;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.JwtException;
 
 import java.util.Date;
 import java.util.UUID;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -20,17 +22,21 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-secret}")
     private String refreshSecretKey;
 
-    private final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 60;      // 1시간
-    private final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 7; // 7일
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 60;        // 1시간
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 7; // 7일
+
+    /* =========================
+       Token 생성
+     ========================= */
 
     public TokenDto createToken(String userId) {
-
         Date now = new Date();
 
         String accessToken = Jwts.builder()
                 .setSubject(userId)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME))
+                .claim("type", "ACCESS")
                 .signWith(SignatureAlgorithm.HS256, accessSecretKey)
                 .compact();
 
@@ -38,57 +44,110 @@ public class JwtTokenProvider {
                 .setSubject(userId)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME))
+                .claim("type", "REFRESH")
                 .signWith(SignatureAlgorithm.HS256, refreshSecretKey)
                 .compact();
+
+        log.info("JWT created - userId={}", userId);
 
         return new TokenDto(accessToken, refreshToken);
     }
 
-    public boolean validateToken(String token) {
-        // 검증 가능한 secret 목록 (user/admin 등 여러 경우 추가 가능)
-        String[] secrets = { refreshSecretKey, accessSecretKey };
+    /* =========================
+       Access Token 검증
+     ========================= */
 
-        for (String secret : secrets) {
-            try {
-                Jwts.parser()
-                        .setSigningKey(secret)
-                        .parseClaimsJws(token);
-                return true; // 성공하면 true 반환
-            } catch (JwtException e) {
-                // 실패하면 다음 secret으로 시도
-                continue;
-            }
+    public boolean validateAccessToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(accessSecretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            boolean valid = "ACCESS".equals(claims.get("type"));
+            log.info("AccessToken validation result={}", valid);
+            return valid;
+
+        } catch (JwtException e) {
+            log.warn("AccessToken validation failed: {}", e.getMessage());
+            return false;
         }
-
-        // 어떤 secret으로도 검증되지 않으면 false
-        return false;
     }
 
+    /* =========================
+       Refresh Token 검증
+     ========================= */
+
+    public boolean validateRefreshToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(refreshSecretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            boolean valid = "REFRESH".equals(claims.get("type"));
+            log.info("RefreshToken validation result={}", valid);
+            return valid;
+
+        } catch (JwtException e) {
+            log.warn("RefreshToken validation failed: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    /* =========================
+       Access Token 재발급
+     ========================= */
 
     public String reissueAccessToken(String refreshToken) {
-        if (!validateToken(refreshToken)) {
+        log.info("Start reissuing access token");
+
+        if (!validateRefreshToken(refreshToken)) {
+            log.warn("Refresh token invalid");
             throw new IllegalArgumentException("Invalid refresh token");
         }
 
-        UUID userId = getUserId(refreshToken);
+        UUID userId = getUserIdFromRefreshToken(refreshToken);
+        log.info("Reissuing access token for userId={}", userId);
+
         Date now = new Date();
 
-        return Jwts.builder()
+        String newAccessToken = Jwts.builder()
                 .setSubject(userId.toString())
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME))
+                .claim("type", "ACCESS")
                 .signWith(SignatureAlgorithm.HS256, accessSecretKey)
                 .compact();
+
+        log.info("Access token reissued successfully");
+
+        return newAccessToken;
     }
 
+    /* =========================
+       UserId 추출 (Access)
+     ========================= */
 
-    public UUID getUserId(String token) {
+    public UUID getUserIdFromAccessToken(String accessToken) {
         Claims claims = Jwts.parser()
                 .setSigningKey(accessSecretKey)
-                .parseClaimsJws(token)
+                .parseClaimsJws(accessToken)
                 .getBody();
 
         return UUID.fromString(claims.getSubject());
     }
 
+    /* =========================
+       UserId 추출 (Refresh)
+     ========================= */
+
+    public UUID getUserIdFromRefreshToken(String refreshToken) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(refreshSecretKey)
+                .parseClaimsJws(refreshToken)
+                .getBody();
+
+        return UUID.fromString(claims.getSubject());
+    }
 }

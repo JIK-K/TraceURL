@@ -44,6 +44,8 @@ public class OAuthSuccessHandler
         response.addCookie(accessToken);
         response.addCookie(refreshToken);
 
+        request.getSession().invalidate();
+
         response.sendRedirect("http://localhost:3000");
     }
 }

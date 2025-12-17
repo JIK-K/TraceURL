@@ -9,12 +9,14 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -34,6 +36,8 @@ public class AuthController {
                     .orElseThrow(() -> new BusinessException(JwtError.REFRESH_TOKEN_INVALID));
 
             String refreshToken = refreshCookie.getValue();
+
+            log.info(refreshToken);
 
             // 2. RefreshToken 검증 & 새로운 AccessToken 발급
             String newAccessToken = jwtTokenProvider.reissueAccessToken(refreshToken);

@@ -1,4 +1,4 @@
-package com.traceurl.traceurl.core.domain.entity;
+package com.traceurl.traceurl.core.shorturl.entity;
 
 import com.traceurl.traceurl.common.base.BaseEntity;
 import com.traceurl.traceurl.common.enums.BaseStatus;
@@ -15,9 +15,10 @@ import java.util.UUID;
 @Builder
 @ToString
 @Entity
-@Table(name = "domains")
-public class Domain extends BaseEntity {
-
+@Table(name = "short_urls", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "short_code")
+})
+public class ShortUrl extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "uuid", updatable = false)
@@ -25,26 +26,23 @@ public class Domain extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_user_id", nullable = false)
-    private User owner;
+    private User ownerUser;
 
-    @Column(nullable = false, unique = true)
-    private String domain;
+    @Column(name = "short_code", nullable = false, length = 64)
+    private String shortCode;
 
-    @Column(name = "is_primary")
-    private Boolean isPrimary;
+    @Column(name = "original_url", nullable = false, columnDefinition = "TEXT")
+    private String originalUrl;
 
+    @Column(name = "title", length = 200)
+    private String title;
+
+    @Column(name = "is_custom")
+    private Boolean isCustom;
+
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
     private BaseStatus status = BaseStatus.ACTIVE;
 
-    @PrePersist
-    public void prePersist() {
-        if (status == null) {
-            status = BaseStatus.ACTIVE;
-        }
-        if (isPrimary == null) {
-            isPrimary = false;
-        }
-    }
 }

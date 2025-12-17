@@ -3,11 +3,13 @@ package com.traceurl.traceurl.common.config;
 import com.traceurl.traceurl.core.auth.handler.OAuthSuccessHandler;
 import com.traceurl.traceurl.core.auth.jwt.JwtAuthenticationFilter;
 import com.traceurl.traceurl.core.auth.service.CustomOAuthUserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.traceurl.traceurl.core.auth.jwt.JwtTokenProvider;
@@ -30,14 +32,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     var configuration = new org.springframework.web.cors.CorsConfiguration();
                     configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-                    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
                     configuration.setAllowedHeaders(List.of("*"));
                     configuration.setAllowCredentials(true);
                     return configuration;
                 }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**",
+                                "/auth/**",
                                 "/oauth2/**"
                         ).permitAll()
                         .anyRequest().authenticated()
@@ -51,7 +53,17 @@ public class SecurityConfig {
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class
-                );
+                )
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"message\":\"UNAUTHORIZED\"}");
+                        })
+                )
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
 
         return http.build();
     }
