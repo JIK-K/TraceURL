@@ -1,4 +1,9 @@
 package com.traceurl.traceurl.core.shorturl.repository;
 
-public class ShortUrlLifecycleRepository {
+import com.traceurl.traceurl.core.shorturl.entity.ShortUrlLifecycle;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface ShortUrlLifecycleRepository extends JpaRepository<ShortUrlLifecycle, UUID> {
 }

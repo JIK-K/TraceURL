@@ -8,8 +8,6 @@ import com.traceurl.traceurl.core.user.repository.UserRepository;
 import com.traceurl.traceurl.core.user.dto.response.UserResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
 
@@ -18,10 +16,8 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserResponseDto getMe(UUID userId){
-        logger.info(userId.toString());
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(UserError.NO_USER));
 

@@ -5,6 +5,7 @@ import com.traceurl.traceurl.common.enums.BaseStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -38,12 +39,12 @@ public class User extends BaseEntity{
     private BaseStatus status = BaseStatus.ACTIVE;
 
     @Column(name = "last_login_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private OffsetDateTime lastLoginAt;
+    private Instant lastLoginAt;
 
     @PrePersist
     public void prePersist() {
         if (this.lastLoginAt == null) {
-            this.lastLoginAt = OffsetDateTime.now();
+            this.lastLoginAt = Instant.now();
         }
         if (this.status == null){
             this.status = BaseStatus.ACTIVE;

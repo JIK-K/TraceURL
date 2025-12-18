@@ -28,8 +28,8 @@ public class ShortUrl extends BaseEntity {
     @JoinColumn(name = "owner_user_id", nullable = false)
     private User ownerUser;
 
-    @Column(name = "short_code", nullable = false, length = 64)
-    private String shortCode;
+    @Column(name = "short_url", nullable = false, length = 64)
+    private String shortUrl;
 
     @Column(name = "original_url", nullable = false, columnDefinition = "TEXT")
     private String originalUrl;

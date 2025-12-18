@@ -5,6 +5,7 @@ import com.traceurl.traceurl.common.enums.ExpireType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class ShortUrlLifecycle extends BaseEntity {
     private Integer expireValue; // 24 / 7 / 30 등
 
     @Column(name = "expire_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private OffsetDateTime expireAt;
+    private Instant expireAt;
 
     @Column(name = "auto_delete")
     private Boolean autoDelete;

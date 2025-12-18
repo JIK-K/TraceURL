@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Getter
@@ -27,9 +28,13 @@ public class UserResponseDto extends BaseDto {
                 .displayName(user.getDisplayName())
                 .status(user.getStatus())
                 .type(user.getType())
-                .lastLoginAt(user.getLastLoginAt())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
+                .lastLoginAt(
+                        user.getLastLoginAt() == null
+                                ? null
+                                : user.getLastLoginAt().atOffset(ZoneOffset.UTC)
+                )
+                .createdAt(user.getCreatedAt().atOffset(ZoneOffset.UTC))
+                .updatedAt(user.getUpdatedAt().atOffset(ZoneOffset.UTC))
                 .build();
     }
 }
