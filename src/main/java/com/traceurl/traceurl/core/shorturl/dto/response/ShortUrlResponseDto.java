@@ -13,7 +13,7 @@ import java.util.UUID;
 @SuperBuilder
 public class ShortUrlResponseDto extends BaseDto {
     private UUID id;
-    private String shortUrl;
+    private String shortCode;
     private String originalUrl;
     private String title;
     private Boolean isCustom;
@@ -22,7 +22,7 @@ public class ShortUrlResponseDto extends BaseDto {
     public static ShortUrlResponseDto from(ShortUrl entity) {
         return ShortUrlResponseDto.builder()
                 .id(entity.getId())
-                .shortUrl(entity.getShortUrl())
+                .shortCode(entity.getShortCode())
                 .originalUrl(entity.getOriginalUrl())
                 .title(entity.getTitle())
                 .isCustom(entity.getIsCustom())

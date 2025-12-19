@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface ShortUrlRepository extends JpaRepository<ShortUrl, UUID> {
-    boolean existsByShortUrl(String shortUrl);
+    boolean existsByShortCode(String shortUrl);
 
     Page<ShortUrl> findByOwnerUserId(
             UUID ownerUserId,
@@ -20,6 +20,7 @@ public interface ShortUrlRepository extends JpaRepository<ShortUrl, UUID> {
             BaseStatus status,
             Pageable pageable
     );
+    ShortUrl findByShortCode(String shortCode);
 }
 
 

@@ -12,6 +12,7 @@ import com.traceurl.traceurl.core.shorturl.repository.ShortUrlRepository;
 import com.traceurl.traceurl.core.user.entity.User;
 import com.traceurl.traceurl.core.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 import static com.traceurl.traceurl.common.util.string.StringUtils.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShortUrlService {
@@ -32,9 +34,8 @@ public class ShortUrlService {
                 ? dto.getAlias()
                 : generateRandomCode();
 
-        String shortDoamin = "http://localhost:8080/" + shortCode;
 
-        if(shortUrlRepository.existsByShortUrl(shortDoamin)){
+        if(shortUrlRepository.existsByShortCode(shortCode)){
             throw new BusinessException(CommonError.DUPLICATE_ERROR);
         }
 
@@ -44,7 +45,7 @@ public class ShortUrlService {
 
          ShortUrl shortUrl = ShortUrl.builder()
                  .ownerUser(user)
-                 .shortUrl(shortDoamin)
+                 .shortCode(shortCode)
                  .originalUrl(dto.getOriginalUrl())
                  .title(dto.getTitle())
                  .isCustom(dto.getIsCustom())
@@ -77,5 +78,11 @@ public class ShortUrlService {
                 status,
                 pageable
         );
+    }
+
+    public String getOriginalUrlByShortUrl(String shortUrl) {
+        ShortUrl entity = shortUrlRepository.findByShortCode(shortUrl);
+        log.info(entity.getOriginalUrl());
+        return entity != null ? entity.getOriginalUrl() : null;
     }
 }
