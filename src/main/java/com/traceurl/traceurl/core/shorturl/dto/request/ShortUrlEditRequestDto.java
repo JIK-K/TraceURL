@@ -1,5 +1,6 @@
 package com.traceurl.traceurl.core.shorturl.dto.request;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -7,10 +8,9 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-public class ShortUrlCreateRequestDto{
-    private String originalUrl;
+@Data
+public class ShortUrlEditRequestDto {
     private String title;
-    private Boolean isCustom;
-    private String alias;
     private String expireDate;
+    private Boolean autoDelete;
 }

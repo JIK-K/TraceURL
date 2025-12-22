@@ -6,6 +6,7 @@ import com.traceurl.traceurl.core.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -44,5 +45,8 @@ public class ShortUrl extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BaseStatus status = BaseStatus.ACTIVE;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
 
 }

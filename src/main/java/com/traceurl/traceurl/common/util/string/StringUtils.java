@@ -25,10 +25,6 @@ public class StringUtils {
             return null;
         }
 
-        // 1. 프론트에서 온 값은 LocalDateTime
-        LocalDateTime localDateTime = LocalDateTime.parse(expireDate);
-
-        // 2. 서버 기준 시간(UTC)으로 간주
-        return localDateTime.toInstant(ZoneOffset.UTC);
+        return Instant.parse(expireDate);
     }
 }
