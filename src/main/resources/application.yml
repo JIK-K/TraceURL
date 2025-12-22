@@ -49,3 +49,7 @@ logging:
     encoding: UTF-8
   level:
     root: info
+
+file:
+  upload:
+    path: ./uploads/qr/

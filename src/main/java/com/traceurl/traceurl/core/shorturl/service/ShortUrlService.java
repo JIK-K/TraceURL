@@ -32,6 +32,7 @@ public class ShortUrlService {
     private final ShortUrlRepository shortUrlRepository;
     private final ShortUrlLifecycleRepository shortUrlLifecycleRepository;
     private final UserRepository userRepository;
+    private final QrCodeService qrCodeService;
 
     public Boolean createShortUrl(ShortUrlCreateRequestDto dto, UUID userId){
         String shortCode = dto.getIsCustom() != null && dto.getIsCustom() && dto.getAlias() != null
@@ -65,6 +66,8 @@ public class ShortUrlService {
                 .build();
 
         shortUrlLifecycleRepository.save(lifecycle);
+
+        qrCodeService.generateAndSave(shortUrl);
 
         return true;
     }
@@ -141,5 +144,4 @@ public class ShortUrlService {
         shortUrl.setDeletedAt(Instant.now());
         return true;
     }
-
 }
