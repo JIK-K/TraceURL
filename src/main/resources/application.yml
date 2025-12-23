@@ -42,6 +42,9 @@ jwt:
   access-secret: ${ACCESS_TOKEN_SECRET_KEY}
   refresh-secret: ${REFRESH_TOKEN_SECRET_KEY}
 
+encryption:
+  secret-key: ${CRYPTO_KEY}
+
 logging:
   file:
     encoding: UTF-8

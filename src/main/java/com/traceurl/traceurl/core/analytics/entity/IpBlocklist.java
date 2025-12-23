@@ -38,6 +38,9 @@ public class IpBlocklist extends BaseEntity {
     @Column(name = "ip_hash", nullable = false, columnDefinition = "CHAR(64)")
     private String ipHash;
 
+    @Column(name="encrypted_ip")
+    private String encrypted_ip;
+
     @Column(length = 200)
     private String reason;
 }
