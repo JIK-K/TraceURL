@@ -89,7 +89,6 @@ public class ShortUrlService {
 
     public String getOriginalUrlByShortUrl(String shortUrl) {
         ShortUrl entity = shortUrlRepository.findByShortCode(shortUrl);
-        log.info(entity.getOriginalUrl());
         return entity != null ? entity.getOriginalUrl() : null;
     }
 

@@ -37,7 +37,6 @@ public class AuthController {
 
             String refreshToken = refreshCookie.getValue();
 
-            log.info(refreshToken);
 
             // 2. RefreshToken 검증 & 새로운 AccessToken 발급
             String newAccessToken = jwtTokenProvider.reissueAccessToken(refreshToken);

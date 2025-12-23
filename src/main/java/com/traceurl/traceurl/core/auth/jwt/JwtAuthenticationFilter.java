@@ -30,7 +30,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException{
         String token = resolveToken(request);
 
-        log.info("token={}",token);
 
         if(StringUtils.hasText(token) && jwtTokenProvider.validateAccessToken(token)){
             UUID userId = jwtTokenProvider.getUserIdFromAccessToken(token);

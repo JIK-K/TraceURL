@@ -22,7 +22,6 @@ public class UserController {
     public ResponseDto<UserResponseDto> me(Authentication authentication) {
         UUID userId = (UUID) authentication.getPrincipal();
 
-        log.info(authentication.toString());
         ResponseDto<UserResponseDto> response = new ResponseDto<>();
         response.setSuccess(userService.getMe(userId));
 
@@ -34,7 +33,6 @@ public class UserController {
             Authentication authentication,
             @RequestBody UserUpdateNameRequestDto requestDto) {
 
-        log.info(authentication.toString());
         UUID userId = (UUID) authentication.getPrincipal();
         ResponseDto<UserResponseDto> response = new ResponseDto<>();
         response.setSuccess(userService.updateUserName(userId, requestDto));
