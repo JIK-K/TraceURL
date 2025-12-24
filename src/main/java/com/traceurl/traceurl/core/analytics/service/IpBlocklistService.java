@@ -4,6 +4,7 @@ import com.traceurl.traceurl.common.constant.CommonError;
 import com.traceurl.traceurl.common.constant.UserError;
 import com.traceurl.traceurl.common.exception.BusinessException;
 import com.traceurl.traceurl.common.util.crypto.AesUtil;
+import com.traceurl.traceurl.common.util.ip.IpUtils;
 import com.traceurl.traceurl.core.analytics.dto.request.IpBlocklistCreateRequestDto;
 import com.traceurl.traceurl.core.analytics.dto.response.IpBlocklistResponseDto;
 import com.traceurl.traceurl.core.analytics.entity.IpBlocklist;
@@ -39,7 +40,7 @@ public class IpBlocklistService {
         String reason = dto.getReason();
 
         // 1. 빠른 조회를 위한 해싱 (SHA-256)
-        String ipHash = hashIp(ipAddress);
+        String ipHash = IpUtils.hashIp(ipAddress);
 
         // 2. ShortUrl 존재 확인
         ShortUrl shortUrl = shortUrlRepository.findByShortCode(shortCode);
@@ -94,24 +95,9 @@ public class IpBlocklistService {
 
     // 차단 여부 확인 (리다이렉트 시 호출됨)
     public boolean isBlocked(UUID shortUrlId, String ipAddress) {
-        return ipBlocklistRepository.existsByShortUrlIdAndIpHash(shortUrlId, hashIp(ipAddress));
+        return ipBlocklistRepository.existsByShortUrlIdAndIpHash(shortUrlId, IpUtils.hashIp(ipAddress));
     }
 
-    // IP 해싱 (SHA-256)
-    private String hashIp(String ipAddress) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(ipAddress.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (Exception e) {
-            throw new BusinessException(CommonError.INTERNAL_SERVER_ERROR);
-        }
-    }
+
 
 }

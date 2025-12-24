@@ -86,7 +86,6 @@ public class JwtTokenProvider {
                     .getBody();
 
             boolean valid = "REFRESH".equals(claims.get("type"));
-            log.info("RefreshToken validation result={}", valid);
             return valid;
 
         } catch (JwtException e) {
