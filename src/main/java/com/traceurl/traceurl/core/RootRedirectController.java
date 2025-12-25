@@ -5,7 +5,6 @@ import com.traceurl.traceurl.core.analytics.service.ClickEventService;
 import com.traceurl.traceurl.core.analytics.service.IpBlocklistService;
 import com.traceurl.traceurl.core.shorturl.entity.ShortUrl;
 import com.traceurl.traceurl.core.shorturl.repository.ShortUrlRepository;
-import com.traceurl.traceurl.core.shorturl.service.ShortUrlService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,7 +22,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RootRedirectController {
 
-    private final ShortUrlService shortUrlService;
     private final ShortUrlRepository shortUrlRepository;
     private final IpBlocklistService ipBlocklistService;
     private final ClickEventService clickEventService;
@@ -32,41 +30,53 @@ public class RootRedirectController {
     public ResponseEntity<Void> redirect(
             @PathVariable String shortCode,
             HttpServletRequest request,
-            HttpServletResponse response, // 쿠키 구우려면 필요
-            @CookieValue(name = "v_id", required = false) String vId // 기존 쿠키 확인
+            HttpServletResponse response,
+            @CookieValue(name = "v_id", required = false) String vId
     ) {
+        // 1. 단축 URL 조회
         ShortUrl shortUrlEntity = shortUrlRepository.findByShortCode(shortCode);
         if (shortUrlEntity == null) return ResponseEntity.notFound().build();
 
+        // 2. 접속 정보 추출 (비동기 처리를 위해 컨트롤러에서 미리 추출)
         String clientIp = IpUtils.getClientIp(request);
+        String uaRaw = request.getHeader("User-Agent");
+        String referrer = request.getHeader("Referer");
+
+        // 3. 차단 여부 확인
         boolean isBlocked = ipBlocklistService.isBlocked(shortUrlEntity.getId(), clientIp);
 
-        // 1. Visitor ID 처리 (쿠키가 없으면 생성)
+        // 4. Visitor ID 처리 (쿠키)
         String visitorId = vId;
         boolean isNewVisitor = false;
         if (visitorId == null) {
             visitorId = UUID.randomUUID().toString();
             isNewVisitor = true;
             Cookie cookie = new Cookie("v_id", visitorId);
-            cookie.setMaxAge(60 * 60 * 24 * 365); // 1년 유지
+            cookie.setMaxAge(60 * 60 * 24 * 365); // 1년
             cookie.setPath("/");
-            cookie.setHttpOnly(true); // 보안
+            cookie.setHttpOnly(true);
             response.addCookie(cookie);
         }
 
-        // 2. 비동기 로그 저장 (차단되었어도 로그는 남기되 isValid를 false로 전달)
+        clientIp = "161.185.160.93";
+        // 5. 비동기 로그 저장 (추출한 문자열 데이터들을 전달)
         clickEventService.logClick(
                 shortUrlEntity.getId(),
-                request,
+                clientIp,
+                uaRaw,
+                referrer,
                 visitorId,
                 isNewVisitor,
-                !isBlocked // 차단 안됐으면 true, 됐으면 false
+                !isBlocked
         );
 
+        // 6. 차단 시 응답
         if (isBlocked) {
+            log.warn("Blocked access attempt: IP={}, Code={}", clientIp, shortCode);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
+        // 7. 정상 리다이렉트
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(shortUrlEntity.getOriginalUrl()))
                 .build();
