@@ -1,6 +1,8 @@
 package com.traceurl.traceurl.core.analytics.controller;
 
 import com.traceurl.traceurl.common.dto.ResponseDto;
+import com.traceurl.traceurl.core.analytics.dto.response.AnalyticsChartResponseDto;
+import com.traceurl.traceurl.core.analytics.dto.response.AnalyticsDetailResponseDto;
 import com.traceurl.traceurl.core.analytics.dto.response.AnalyticsSummaryResponseDto;
 import com.traceurl.traceurl.core.analytics.dto.response.RecentClickResponseDto;
 import com.traceurl.traceurl.core.analytics.service.AnalyticsService;
@@ -8,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +28,7 @@ public class AnalyticsController {
             Pageable pageable, // size, page, sort를 자동으로 처리
             Authentication authentication
     ) {
-        UUID userId = UUID.fromString(authentication.getName());
+        UUID userId = (UUID) authentication.getPrincipal();
 
         List<RecentClickResponseDto> data = analyticsService.getRecentClicks(
                 userId,
@@ -47,13 +46,41 @@ public class AnalyticsController {
             @PathVariable String shortCode,
             Authentication authentication
     ){
-        UUID userId = UUID.fromString(authentication.getName());
+        UUID userId = (UUID) authentication.getPrincipal();
         AnalyticsSummaryResponseDto data = analyticsService.getSummary(
                 userId,
                 shortCode
         );
         ResponseDto<AnalyticsSummaryResponseDto> response = new ResponseDto<>();
         response.setSuccess(data);
+        return response;
+    }
+
+    @GetMapping("/{shortCode}/chart")
+    public ResponseDto<AnalyticsChartResponseDto> getChartData(
+            @PathVariable String shortCode,
+            @RequestParam(defaultValue = "7d") String range, // 기본값 7일
+            Authentication authentication
+    ){
+        UUID userId = (UUID) authentication.getPrincipal();
+
+        AnalyticsChartResponseDto result = analyticsService.getChartData(userId, shortCode, range);
+        ResponseDto<AnalyticsChartResponseDto> response = new ResponseDto<>();
+        response.setSuccess(result);
+
+        return response;
+    }
+
+    @GetMapping("/{shortCode}/details")
+    public ResponseDto<AnalyticsDetailResponseDto> getDetails(
+            @PathVariable String shortCode,
+            Authentication authentication
+    ) {
+        UUID userId = (UUID) authentication.getPrincipal();
+        AnalyticsDetailResponseDto result = analyticsService.getBreakdownDetails(userId, shortCode);
+        ResponseDto<AnalyticsDetailResponseDto> response = new ResponseDto<>();
+        response.setSuccess(result);
+
         return response;
     }
 }

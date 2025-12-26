@@ -2,6 +2,8 @@ package com.traceurl.traceurl.core.analytics.service;
 
 import com.traceurl.traceurl.common.constant.CommonError;
 import com.traceurl.traceurl.common.exception.BusinessException;
+import com.traceurl.traceurl.core.analytics.dto.response.AnalyticsChartResponseDto;
+import com.traceurl.traceurl.core.analytics.dto.response.AnalyticsDetailResponseDto;
 import com.traceurl.traceurl.core.analytics.dto.response.AnalyticsSummaryResponseDto;
 import com.traceurl.traceurl.core.analytics.dto.response.RecentClickResponseDto;
 import com.traceurl.traceurl.core.analytics.entity.ClickEvent;
@@ -22,9 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -92,6 +93,58 @@ public class AnalyticsService {
                 .returnRate(Math.round((100 - newRate) * 10) / 10.0)
                 .topCountry(getTopCountry(shortUrl.getId(), today))
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public AnalyticsChartResponseDto getChartData(UUID userId, String shortCode, String range) {
+        ShortUrl shortUrl = shortUrlRepository.findByShortCodeAndOwnerUserId(shortCode, userId)
+                .orElseThrow(() -> new BusinessException(CommonError.ENTITY_NOT_FOUND));
+
+        // 1. 날짜 범위 설정 (7d, 30d 등)
+        int days = range.equals("30d") ? 30 : 7;
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(days - 1);
+
+        // 2. DB에서 데이터 조회
+        List<ClickStatsDaily> stats = clickStatsDailyRepository
+                .findByShortUrlIdAndStatDateBetweenOrderByStatDateAsc(shortUrl.getId(), startDate, endDate);
+
+        // 3. 조회를 빠르게 하기 위해 Map으로 변환
+        Map<LocalDate, ClickStatsDaily> statsMap = stats.stream()
+                .collect(Collectors.toMap(ClickStatsDaily::getStatDate, s -> s));
+
+        // 4. 시작일부터 종료일까지 루프를 돌며 데이터가 없으면 0으로 채움
+        List<AnalyticsChartResponseDto.ChartPoint> points = new ArrayList<>();
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            ClickStatsDaily s = statsMap.get(date);
+            points.add(new AnalyticsChartResponseDto.ChartPoint(
+                    date.toString(),
+                    s != null ? s.getPv() : 0L,
+                    s != null ? s.getUv() : 0L
+            ));
+        }
+
+        return new AnalyticsChartResponseDto(points);
+    }
+
+    public AnalyticsDetailResponseDto getBreakdownDetails(UUID userId, String shortCode) {
+        ShortUrl shortUrl = shortUrlRepository.findByShortCodeAndOwnerUserId(shortCode, userId)
+                .orElseThrow(() -> new BusinessException(CommonError.ENTITY_NOT_FOUND));
+
+        return AnalyticsDetailResponseDto.from(
+                convert(shortUrl.getId(), "DEVICE"),
+                convert(shortUrl.getId(), "BROWSER"),
+                convert(shortUrl.getId(), "OS")
+        );
+    }
+
+    private List<AnalyticsDetailResponseDto.DetailItem> convert(UUID urlId, String dimension) {
+        List<Map<String, Object>> results = clickStatsBreakdownRepository.getTotalBreakdownStats(urlId, dimension);
+        long totalCount = results.stream().mapToLong(r -> (long) r.get("count")).sum();
+
+        return results.stream()
+                .map(row -> AnalyticsDetailResponseDto.DetailItem.from(row, totalCount))
+                .collect(Collectors.toList());
     }
 
     private double calculateChange(long current, long previous) {

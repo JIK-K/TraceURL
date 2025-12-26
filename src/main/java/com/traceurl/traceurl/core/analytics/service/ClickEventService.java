@@ -84,7 +84,7 @@ public class ClickEventService {
             breakdownRepository.upsertBreakdown(shortUrlId, today, "COUNTRY", geo.getCountryCode(), uvAdd);
             breakdownRepository.upsertBreakdown(shortUrlId, today, "DEVICE", event.getUaDeviceType(), uvAdd);
             breakdownRepository.upsertBreakdown(shortUrlId, today, "BROWSER", event.getUaBrowser(), uvAdd);
-
+            breakdownRepository.upsertBreakdown(shortUrlId, today, "OS", event.getUaOs(), uvAdd);
             // 시간대별 (HOUR)
             String currentHour = String.valueOf(java.time.LocalTime.now().getHour());
             breakdownRepository.upsertBreakdown(shortUrlId, today, "HOUR", currentHour, uvAdd);

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ClickStatsBreakdownRepository extends JpaRepository<ClickStatsBreakdown, Long> {
@@ -31,4 +32,15 @@ public interface ClickStatsBreakdownRepository extends JpaRepository<ClickStatsB
     @Query("SELECT b FROM ClickStatsBreakdown b WHERE b.shortUrlId = :id AND b.statDate = :date " +
             "AND b.dimension = 'COUNTRY' ORDER BY b.pv DESC")
     List<ClickStatsBreakdown> findTopCountry(@Param("id") UUID id, @Param("date") LocalDate date, Pageable pageable);
+
+    @Query("SELECT b.dimensionValue as label, SUM(b.pv) as count " +
+            "FROM ClickStatsBreakdown b " +
+            "WHERE b.shortUrlId = :shortUrlId " +
+            "AND b.dimension = :dimension " +
+            "GROUP BY b.dimensionValue " +
+            "ORDER BY count DESC")
+    List<Map<String, Object>> getTotalBreakdownStats(
+            @Param("shortUrlId") UUID shortUrlId,
+            @Param("dimension") String dimension
+    );
 }

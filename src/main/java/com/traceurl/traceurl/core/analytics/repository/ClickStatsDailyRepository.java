@@ -28,4 +28,7 @@ public interface ClickStatsDailyRepository extends JpaRepository<ClickStatsDaily
     List<ClickStatsDaily> findByShortUrlIdAndStatDateGreaterThanEqualOrderByStatDateDesc(
             UUID shortUrlId, LocalDate startDate
     );
+    List<ClickStatsDaily> findByShortUrlIdAndStatDateBetweenOrderByStatDateAsc(
+            UUID shortUrlId, LocalDate startDate, LocalDate endDate
+    );
 }
