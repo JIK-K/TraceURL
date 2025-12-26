@@ -36,8 +36,11 @@ public class GeoLocationService {
             InetAddress ip = InetAddress.getByName(ipAddress);
             CityResponse response = dbReader.city(ip);
 
+            String isoCode = response.getCountry().getIsoCode();
+
             return GeoLocationDto.builder()
                     .country(response.getCountry().getName())
+                    .countryCode(isoCode != null ? isoCode.toLowerCase() : "unknown")
                     .region(response.getMostSpecificSubdivision().getName())
                     .city(response.getCity().getName())
                     .build();

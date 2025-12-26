@@ -39,7 +39,8 @@ public class ClickEvent extends BaseEntity {
     private String ipHash; // 접속자 IP를 SHA-256 등으로 해싱한 값 (개인정보 보호 및 중복 체크용)
 
     // --- Geo Location (지리 정보) ---
-    private String geoCountry; // 접속 국가 코드 (예: KR, US)
+    private String geoCountry; // 접속 국가
+    private String geoCountryCode; // 접속 국가 코드 (예: KR, US)
     private String geoRegion;  // 접속 지역/주 (예: Seoul, California)
     private String geoCity;    // 접속 도시 (예: Gangnam-gu, Mountain View)
 

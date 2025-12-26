@@ -4,6 +4,8 @@ import com.traceurl.traceurl.common.util.ip.IpUtils;
 import com.traceurl.traceurl.core.analytics.dto.common.GeoLocationDto;
 import com.traceurl.traceurl.core.analytics.entity.ClickEvent;
 import com.traceurl.traceurl.core.analytics.repository.ClickEventRepository;
+import com.traceurl.traceurl.core.analytics.repository.ClickStatsBreakdownRepository;
+import com.traceurl.traceurl.core.analytics.repository.ClickStatsDailyRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import ua_parser.Client;
 import ua_parser.Parser;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Slf4j
@@ -19,8 +22,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ClickEventService {
 
-    private final ClickEventRepository clickEventRepository;
     private final GeoLocationService geoLocationService;
+    private final ClickEventRepository clickEventRepository;
+    private final ClickStatsDailyRepository dailyRepository;
+    private final ClickStatsBreakdownRepository breakdownRepository;
     private final Parser uaParser = new Parser();
 
     /**
@@ -55,6 +60,7 @@ public class ClickEventService {
                     .ipHash(ipHash)
                     .maskedIp(maskedIp)
                     .geoCountry(geo.getCountry())
+                    .geoCountryCode(geo.getCountryCode())
                     .geoRegion(geo.getRegion())
                     .geoCity(geo.getCity())
                     .uaRaw(uaRaw)
@@ -66,6 +72,22 @@ public class ClickEventService {
                     .build();
 
             clickEventRepository.save(event);
+
+            // 2. 실시간 통계 업데이트
+            LocalDate today = LocalDate.now();
+            int uvAdd = isNewVisitor ? 1 : 0;
+
+            // 일간 통합 통계
+            dailyRepository.upsertDailyStats(shortUrlId, today, uvAdd);
+
+            // 상세 분석 통계 (국가, 디바이스, 브라우저)
+            breakdownRepository.upsertBreakdown(shortUrlId, today, "COUNTRY", geo.getCountryCode(), uvAdd);
+            breakdownRepository.upsertBreakdown(shortUrlId, today, "DEVICE", event.getUaDeviceType(), uvAdd);
+            breakdownRepository.upsertBreakdown(shortUrlId, today, "BROWSER", event.getUaBrowser(), uvAdd);
+
+            // 시간대별 (HOUR)
+            String currentHour = String.valueOf(java.time.LocalTime.now().getHour());
+            breakdownRepository.upsertBreakdown(shortUrlId, today, "HOUR", currentHour, uvAdd);
 
         } catch (Exception e) {
             log.error("Failed to log click event for shortUrlId {}: {}", shortUrlId, e.getMessage());
