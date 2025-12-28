@@ -43,4 +43,20 @@ public interface ClickStatsBreakdownRepository extends JpaRepository<ClickStatsB
             @Param("shortUrlId") UUID shortUrlId,
             @Param("dimension") String dimension
     );
+
+    @Query("SELECT b.dimensionValue as label, SUM(b.pv) as count " +
+            "FROM ClickStatsBreakdown b " +
+            "WHERE b.shortUrlId = :shortUrlId " +
+            "AND b.dimension = 'COUNTRY' " +
+            "GROUP BY b.dimensionValue " +
+            "ORDER BY count DESC")
+    List<Map<String, Object>> getCountryStats(@Param("shortUrlId") UUID shortUrlId);
+
+    @Query("SELECT b.dimensionValue as label, SUM(b.pv) as count " +
+            "FROM ClickStatsBreakdown b " +
+            "WHERE b.shortUrlId = :shortUrlId " +
+            "AND b.dimension = 'REFERRER' " +
+            "GROUP BY b.dimensionValue " +
+            "ORDER BY count DESC")
+    List<Map<String, Object>> getReferrerStats(@Param("shortUrlId") UUID shortUrlId);
 }

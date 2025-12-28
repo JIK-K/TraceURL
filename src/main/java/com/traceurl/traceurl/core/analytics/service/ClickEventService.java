@@ -80,11 +80,16 @@ public class ClickEventService {
             // 일간 통합 통계
             dailyRepository.upsertDailyStats(shortUrlId, today, uvAdd);
 
-            // 상세 분석 통계 (국가, 디바이스, 브라우저)
+            // 상세 분석 통계 (국가, 디바이스, 브라우저, OS)
             breakdownRepository.upsertBreakdown(shortUrlId, today, "COUNTRY", geo.getCountryCode(), uvAdd);
             breakdownRepository.upsertBreakdown(shortUrlId, today, "DEVICE", event.getUaDeviceType(), uvAdd);
             breakdownRepository.upsertBreakdown(shortUrlId, today, "BROWSER", event.getUaBrowser(), uvAdd);
             breakdownRepository.upsertBreakdown(shortUrlId, today, "OS", event.getUaOs(), uvAdd);
+
+            // ⭐️ 리퍼러 집계 추가
+            String refLabel = (referrer == null || referrer.isBlank()) ? "Direct" : parseDomain(referrer);
+            breakdownRepository.upsertBreakdown(shortUrlId, today, "REFERRER", refLabel, uvAdd);
+
             // 시간대별 (HOUR)
             String currentHour = String.valueOf(java.time.LocalTime.now().getHour());
             breakdownRepository.upsertBreakdown(shortUrlId, today, "HOUR", currentHour, uvAdd);
@@ -101,5 +106,16 @@ public class ClickEventService {
         if (lowercaseUa.contains("tablet") || lowercaseUa.contains("ipad")) return "TABLET";
         if (lowercaseUa.contains("bot") || lowercaseUa.contains("crawler")) return "BOT";
         return "DESKTOP";
+    }
+
+    private String parseDomain(String url) {
+        try {
+            java.net.URI uri = new java.net.URI(url);
+            String domain = uri.getHost();
+            if (domain == null) return "Direct";
+            return domain.startsWith("www.") ? domain.substring(4) : domain;
+        } catch (Exception e) {
+            return "Direct";
+        }
     }
 }

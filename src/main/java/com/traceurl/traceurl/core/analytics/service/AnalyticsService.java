@@ -131,11 +131,25 @@ public class AnalyticsService {
         ShortUrl shortUrl = shortUrlRepository.findByShortCodeAndOwnerUserId(shortCode, userId)
                 .orElseThrow(() -> new BusinessException(CommonError.ENTITY_NOT_FOUND));
 
+        // DTO의 from 메서드에 국가(Country) 리스트까지 4개를 전달합니다.
         return AnalyticsDetailResponseDto.from(
                 convert(shortUrl.getId(), "DEVICE"),
                 convert(shortUrl.getId(), "BROWSER"),
-                convert(shortUrl.getId(), "OS")
+                convert(shortUrl.getId(), "OS"),
+                convertCountries(shortUrl.getId()),
+                convert(shortUrl.getId(), "REFERRER")
         );
+    }
+
+
+    // 국가 전용 변환 메서드 (CountryItem 전용)
+    private List<AnalyticsDetailResponseDto.CountryItem> convertCountries(UUID urlId) {
+        List<Map<String, Object>> results = clickStatsBreakdownRepository.getCountryStats(urlId);
+        long totalCount = results.stream().mapToLong(r -> (long) r.get("count")).sum();
+
+        return results.stream()
+                .map(row -> AnalyticsDetailResponseDto.CountryItem.from(row, totalCount))
+                .collect(Collectors.toList());
     }
 
     private List<AnalyticsDetailResponseDto.DetailItem> convert(UUID urlId, String dimension) {
