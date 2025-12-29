@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: traceurl
+
+  output:
+    ansi:
+      enabled: always
+
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+    show-aql: true
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 4
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_CALLBACK_URL}
+            scope:
+              - email
+              - profile
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            redirect-uri: ${GITHUB_CALLBACK_URL}
+            scope:
+              - user:email
+
+jwt:
+  access-secret: ${ACCESS_TOKEN_SECRET_KEY}
+  refresh-secret: ${REFRESH_TOKEN_SECRET_KEY}
+
+encryption:
+  secret-key: ${CRYPTO_KEY}
+
+logging:
+  file:
+    encoding: UTF-8
+  console:
+    encoding: UTF-8
+  level:
+    root: info
+
+file:
+  upload:
+    path: ./uploads/qr/
