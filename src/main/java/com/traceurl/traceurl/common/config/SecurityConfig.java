@@ -42,6 +42,7 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/oauth2/**"
                         ).permitAll()
+                        .requestMatchers("/{shortCode}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth

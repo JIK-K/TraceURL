@@ -1,7 +1,9 @@
 package com.traceurl.traceurl.core.user.service;
 
 import com.traceurl.traceurl.common.constant.UserError;
+import com.traceurl.traceurl.common.enums.BaseStatus;
 import com.traceurl.traceurl.common.exception.BusinessException;
+import com.traceurl.traceurl.core.shorturl.repository.ShortUrlRepository;
 import com.traceurl.traceurl.core.user.dto.requset.UserUpdateNameRequestDto;
 import com.traceurl.traceurl.core.user.entity.User;
 import com.traceurl.traceurl.core.user.repository.UserRepository;
@@ -16,6 +18,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ShortUrlRepository shortUrlRepository;
 
     public UserResponseDto getMe(UUID userId){
         User user = userRepository.findById(userId)
@@ -34,4 +37,18 @@ public class UserService {
 
         return UserResponseDto.from(user);
     }
+
+    @Transactional
+    public void withdraw(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(UserError.NO_USER));
+
+        // 1. 연결된 모든 ShortUrl의 상태를 DELETED로 변경
+        shortUrlRepository.deleteAllByOwner(user);
+
+        // 2. 유저 상태 변경 (예: INACTIVE)
+        user.setStatus(BaseStatus.INACTIVE);
+        userRepository.save(user);
+    }
+
 }

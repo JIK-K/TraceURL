@@ -76,7 +76,7 @@ public class ShortUrlService {
             UUID userId,
             Pageable pageable,
             BaseStatus status
-    ){
+    ) {
         if (status == null) {
             return shortUrlRepository.findByOwnerUserIdAndStatusNot(userId, BaseStatus.DELETED, pageable);
         }
@@ -85,11 +85,6 @@ public class ShortUrlService {
                 status,
                 pageable
         );
-    }
-
-    public String getOriginalUrlByShortUrl(String shortUrl) {
-        ShortUrl entity = shortUrlRepository.findByShortCode(shortUrl);
-        return entity != null ? entity.getOriginalUrl() : null;
     }
 
     public ShortUrlEditResponseDto getShortUrlEditData(
@@ -121,6 +116,7 @@ public class ShortUrlService {
                 .findByShortUrlId(shortUrl.getId())
                 .orElseThrow(() -> new BusinessException(CommonError.ENTITY_NOT_FOUND));
 
+        shortUrl.setStatus(dto.getStatus());
         if (dto.getTitle() != null) {
             shortUrl.setTitle(dto.getTitle());
         }

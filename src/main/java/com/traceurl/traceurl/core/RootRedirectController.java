@@ -34,7 +34,7 @@ public class RootRedirectController {
             @CookieValue(name = "v_id", required = false) String vId
     ) {
         // 1. 단축 URL 조회
-        ShortUrl shortUrlEntity = shortUrlRepository.findByShortCode(shortCode);
+        ShortUrl shortUrlEntity = shortUrlRepository.findActiveByShortCode(shortCode);
         if (shortUrlEntity == null) return ResponseEntity.notFound().build();
 
         // 2. 접속 정보 추출 (비동기 처리를 위해 컨트롤러에서 미리 추출)

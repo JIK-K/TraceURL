@@ -39,4 +39,9 @@ public class UserController {
         return response;
     }
 
+    @DeleteMapping("/remove")
+    public void removeUser(Authentication authentication){
+        UUID userId = (UUID) authentication.getPrincipal();
+        userService.withdraw(userId);
+    }
 }
