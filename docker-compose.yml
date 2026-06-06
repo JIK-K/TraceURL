@@ -1,0 +1,66 @@
+services:
+  # 1. Database (PostgreSQL) - lolfight_db 역할
+  db:
+    image: postgres:15-alpine
+    container_name: traceurl-db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: traceurl
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - traceurl_network
+
+  # 2. Backend (Spring Boot)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: traceurl-backend
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      # 주소는 서비스 이름인 'db'로 연결
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/traceurl
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      # JVM 메모리 설정 (NestJS의 max-old-space-size와 유사한 역할)
+      JAVA_OPTS: "-Xmx1024m -Xms512m"
+    ports:
+      - "8080:8080"
+    networks:
+      - traceurl_network
+
+  # 3. Nginx - SSL 및 리버스 프록시
+  nginx:
+    image: nginx:latest
+    container_name: traceurl-nginx
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # 작성하신 설정 파일
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    networks:
+      - traceurl_network
+    # 예시처럼 Nginx가 설정 변경 시마다 재시작되도록 함
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+
+networks:
+  traceurl_network:
+    driver: bridge # external: true 보다는 처음 생성 시 bridge가 편합니다.
+
+volumes:
+  postgres_data:
