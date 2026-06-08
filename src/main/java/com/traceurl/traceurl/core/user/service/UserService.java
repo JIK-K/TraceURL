@@ -4,7 +4,7 @@ import com.traceurl.traceurl.common.constant.UserError;
 import com.traceurl.traceurl.common.enums.BaseStatus;
 import com.traceurl.traceurl.common.exception.BusinessException;
 import com.traceurl.traceurl.core.shorturl.repository.ShortUrlRepository;
-import com.traceurl.traceurl.core.user.dto.requset.UserUpdateNameRequestDto;
+import com.traceurl.traceurl.core.user.dto.request.UserUpdateNameRequestDto;
 import com.traceurl.traceurl.core.user.entity.User;
 import com.traceurl.traceurl.core.user.repository.UserRepository;
 import com.traceurl.traceurl.core.user.dto.response.UserResponseDto;

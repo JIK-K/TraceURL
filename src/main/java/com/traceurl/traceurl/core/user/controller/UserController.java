@@ -1,7 +1,7 @@
 package com.traceurl.traceurl.core.user.controller;
 
 import com.traceurl.traceurl.common.dto.ResponseDto;
-import com.traceurl.traceurl.core.user.dto.requset.UserUpdateNameRequestDto;
+import com.traceurl.traceurl.core.user.dto.request.UserUpdateNameRequestDto;
 import com.traceurl.traceurl.core.user.service.UserService;
 import com.traceurl.traceurl.core.user.dto.response.UserResponseDto;
 import lombok.RequiredArgsConstructor;

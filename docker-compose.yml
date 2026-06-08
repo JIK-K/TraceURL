@@ -40,24 +40,6 @@ services:
     networks:
       - traceurl_network
 
-  # 3. Nginx - SSL 및 리버스 프록시
-  nginx:
-    image: nginx:latest
-    container_name: traceurl-nginx
-    depends_on:
-      - backend
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # 작성하신 설정 파일
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    networks:
-      - traceurl_network
-    # 예시처럼 Nginx가 설정 변경 시마다 재시작되도록 함
-    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
-
 networks:
   traceurl_network:
     driver: bridge # external: true 보다는 처음 생성 시 bridge가 편합니다.

@@ -32,6 +32,15 @@ public class GeoLocationService {
             return GeoLocationDto.unknown();
         }
 
+        if (isPrivateIp(ipAddress)) {
+            return GeoLocationDto.builder()
+                    .country("Local")
+                    .countryCode("local")
+                    .region("Local")
+                    .city("Localhost")
+                    .build();
+        }
+
         try {
             InetAddress ip = InetAddress.getByName(ipAddress);
             CityResponse response = dbReader.city(ip);
@@ -48,5 +57,15 @@ public class GeoLocationService {
             // 로컬 IP(127.0.0.1)나 분석 불가능한 IP일 경우
             return GeoLocationDto.unknown();
         }
+    }
+
+    private boolean isPrivateIp(String ip) {
+        return ip.equals("127.0.0.1")
+                || ip.startsWith("192.168.")
+                || ip.startsWith("10.")
+                || ip.startsWith("172.16.") || ip.startsWith("172.17.")
+                || ip.startsWith("172.18.") || ip.startsWith("172.19.")
+                || ip.startsWith("172.2")
+                || ip.startsWith("172.30.") || ip.startsWith("172.31.");
     }
 }

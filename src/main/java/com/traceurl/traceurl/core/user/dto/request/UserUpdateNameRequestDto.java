@@ -1,4 +1,4 @@
-package com.traceurl.traceurl.core.user.dto.requset;
+package com.traceurl.traceurl.core.user.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

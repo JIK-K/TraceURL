@@ -58,7 +58,6 @@ public class RootRedirectController {
             response.addCookie(cookie);
         }
 
-        clientIp = "161.185.160.93";
         // 5. 비동기 로그 저장 (추출한 문자열 데이터들을 전달)
         clickEventService.logClick(
                 shortUrlEntity.getId(),
