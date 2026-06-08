@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(request -> {
                     var configuration = new org.springframework.web.cors.CorsConfiguration();
-                    configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+                    configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://traceurl.p-e.kr"));
                     configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
                     configuration.setAllowedHeaders(List.of("*"));
                     configuration.setAllowCredentials(true);
@@ -40,7 +40,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**",
-                                "/oauth2/**"
+                                "/oauth2/**",
+                                "/login/oauth2/**"
                         ).permitAll()
                         .requestMatchers("/{shortCode}").permitAll()
                         .anyRequest().authenticated()
