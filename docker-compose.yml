@@ -36,13 +36,16 @@ services:
       # JVM 메모리 설정 (NestJS의 max-old-space-size와 유사한 역할)
       JAVA_OPTS: "-Xmx1024m -Xms512m"
     ports:
-      - "8080:8080"
+      - "8080"
     networks:
       - traceurl_network
+      - tcs_proxy_network
 
 networks:
   traceurl_network:
     driver: bridge # external: true 보다는 처음 생성 시 bridge가 편합니다.
+  tcs_proxy_network:
+    external: true  # 추가
 
 volumes:
   postgres_data:
