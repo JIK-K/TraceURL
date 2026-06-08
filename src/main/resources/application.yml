@@ -4,6 +4,10 @@ spring:
   application:
     name: traceurl
 
+server:
+  servlet:
+    context-path: /api
+
   output:
     ansi:
       enabled: always
