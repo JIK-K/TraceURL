@@ -4,10 +4,6 @@ spring:
   application:
     name: traceurl
 
-server:
-  servlet:
-    context-path: /api
-
   output:
     ansi:
       enabled: always
@@ -62,3 +58,7 @@ logging:
 file:
   upload:
     path: ./uploads/qr/
+
+server:
+  servlet:
+    context-path: /api
