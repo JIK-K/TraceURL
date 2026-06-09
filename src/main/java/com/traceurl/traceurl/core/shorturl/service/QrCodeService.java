@@ -31,7 +31,7 @@ public class QrCodeService {
     private String uploadPath;
 
     public void generateAndSave(ShortUrl shortUrl){
-        String fullUrl = "http://localhost:8080/"+shortUrl.getShortCode();
+        String fullUrl = "https://traceurl.p-e.kr/api/"+shortUrl.getShortCode();
         String fileName = shortUrl.getShortCode() + ".png";
 
         saveFile(fullUrl, fileName);
