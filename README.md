@@ -1,3 +1,5 @@
+
+
 # TraceURL 🔗
 
 **TraceURL**은 사용자가 긴 URL을 짧게 단축하고, 생성된 단축 URL을 통해 유입되는 트래픽에 대한 상세한 분석(클릭 수, 유입 국가, 브라우저, 디바이스, 리퍼러 등)을 실시간으로 제공하는 URL 단축 및 트래킹 웹 서비스입니다.
@@ -43,6 +45,7 @@ com.traceurl.traceurl
 > **💡 데이터베이스 설계 주안점**
 > 사용자(User), 단축 URL(ShortUrl), 클릭 이벤트 로그(ClickEvent), QR 코드(QrCode) 간의 관계형 데이터를 설계했습니다. 특히 대용량 데이터가 쌓이는 클릭 이벤트 테이블은 조회를 최적화하기 위해 비정규화(Denormalization) 및 인덱싱 설계를 고려하였습니다.
 
+<img width="688" height="645" alt="화면 캡처 2026-06-09 105617" src="https://github.com/user-attachments/assets/44180434-455b-4ad2-94a5-6c87b69a77e9" />
 
 ---
 ## 🛠 주요 사용 기술 및 구현 사례
