@@ -47,10 +47,8 @@ public class RootRedirectController {
 
         // 4. Visitor ID 처리 (쿠키)
         String visitorId = vId;
-        boolean isNewVisitor = false;
         if (visitorId == null) {
             visitorId = UUID.randomUUID().toString();
-            isNewVisitor = true;
             Cookie cookie = new Cookie("v_id", visitorId);
             cookie.setMaxAge(60 * 60 * 24 * 365); // 1년
             cookie.setPath("/");
@@ -65,7 +63,6 @@ public class RootRedirectController {
                 uaRaw,
                 referrer,
                 visitorId,
-                isNewVisitor,
                 !isBlocked
         );
 

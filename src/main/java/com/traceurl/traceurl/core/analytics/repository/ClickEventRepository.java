@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface ClickEventRepository extends JpaRepository<ClickEvent, UUID> {
     Page<ClickEvent> findByShortUrlId(UUID shortUrlId, Pageable pageable);
+    boolean existsByShortUrlIdAndVisitorId(UUID shortUrlId, String visitorId);
 }

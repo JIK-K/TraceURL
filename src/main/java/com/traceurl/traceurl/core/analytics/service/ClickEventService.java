@@ -40,10 +40,12 @@ public class ClickEventService {
             String uaRaw,
             String referrer,
             String visitorId,
-            boolean isNewVisitor,
             boolean isValid
     ) {
         try {
+            // 0. 단축 URL별 첫 방문(UV) 여부 판단
+            boolean isNewVisitor = !clickEventRepository.existsByShortUrlIdAndVisitorId(shortUrlId, visitorId);
+
             // 1. IP 기반 정보 생성
             String ipHash = IpUtils.hashIp(clientIp);
             String maskedIp = IpUtils.maskIp(clientIp);
